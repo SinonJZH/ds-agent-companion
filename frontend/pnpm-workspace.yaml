@@ -1,0 +1,6 @@
+# Angular 构建工具链的原生依赖需要执行安装期构建脚本；pnpm 11+ 用 allowBuilds 显式批准
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true

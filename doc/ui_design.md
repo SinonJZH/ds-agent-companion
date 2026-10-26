@@ -4,7 +4,7 @@
 
 ## 技术选型与架构形态
 
-- 前端：单一 web 前端（Angular），桌面与移动同构，维护一套代码。
+- 前端：单一 web 前端（Angular 22，包管理器 pnpm，样式表 SCSS），桌面与移动同构，维护一套代码。
 - 引擎：Python asyncio 单进程，内置 API 服务与前端静态资源托管，对外为本地 / 局域网 C/S 结构。
 - 桌面：pywebview 壳窗口加载引擎服务的前端页面；桌面集成收窄为快捷键（页面层键盘事件）与系统通知（壳转发）；更深度集成（托盘等）初版不做。
 - 移动端（后续）：浏览器 / PWA 访问同一服务。
@@ -13,6 +13,22 @@
   Connect 协议（普通 HTTP POST + JSON，无需 gRPC-Web 代理，对反向代理与内网穿透透明）；对话流式输出走
   server-streaming；前端组件只依赖生成的客户端 service，接口调用即方法调用。
 - 富文本：浏览器侧 markdown 渲染（markdown-it 或同类）+ 按消息条目分项更新节流；长会话采用虚拟滚动。
+
+## Angular 编码规范（v22）
+
+- TypeScript：strict；类型显而易见时用推断；禁 `any`，不确定用 `unknown`。
+- 组件一律 standalone（v20+ 默认），装饰器里**不写** `standalone: true`；**不显式设**
+  `ChangeDetectionStrategy.OnPush`（v22+ 默认）。
+- 状态用 signals：`signal` / `computed()` / `linkedSignal()`；改值只用 `set` / `update`，禁 `mutate`。
+- 输入输出用函数式 API：`input()` / `output()` / 双向绑定 `model()`，不用装饰器。
+- 新表单优先 Signal Forms（`@angular/forms/signals`，v22+ 稳定）；不用它时选 Reactive Forms，不用模板驱动表单。
+- 模板：原生控制流 `@if` / `@for` / `@switch`，禁 `*ngIf` / `*ngFor` / `*ngSwitch`；禁 `ngClass` / `ngStyle`，用
+  `class` / `style` 绑定；不导入 `CommonModule`，按需导入用到的指令/管道；observable 用 `async`
+  管道；模板保持简单，复杂逻辑放组件；小组件倾向内联模板；模板内不得依赖 `new Date()` 等浏览器全局（SSG/SSR 安全）。
+- 宿主绑定/监听写进装饰器的 `host` 对象，禁 `@HostBinding` / `@HostListener`。
+- 服务：单一职责；单例 `providedIn: 'root'`（v22+ 优先 `@Service` 装饰器）；依赖注入用 `inject()`，不用构造器注入。
+- 静态图片用 `NgOptimizedImage`（内联 base64 图片不适用）。
+- 无障碍：过 AXE 全部检查，满足 WCAG AA（焦点管理、对比度、ARIA）。
 
 ## 主题与颜色规范
 

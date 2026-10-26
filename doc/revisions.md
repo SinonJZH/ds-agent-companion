@@ -2,6 +2,24 @@
 
 记录每次文档修订时的决策与改动内容，不记录现状。新记录追加在最上方（按时间倒序）。
 
+## 2026-10-26 SPDX 文件头自动检测与补写
+
+- 决策：SPDX 文件头改由脚本机械把关——`scripts/add_license_headers.py` 默认仅检测（缺头即非零退出），`--fix`
+  自动补写；年份取文件入库时间（git 首次加入的提交年份），未入库新文件取当年；Python 文件头置于 shebang /
+  编码声明之后；覆盖 `.py` / `.ts` / `.scss`，只扫 git 可见文件（忽略清单自动生效），工具生成代码目录在脚本
+  `EXCLUDED_PARTS` 排除。CI backend job 增加检测步骤。
+- 改动：`AGENTS.md` 许可声明一节补脚本用法一条；新增 `scripts/add_license_headers.py`；CI 增加检测步骤；补写了
+  `frontend/src/app/app.scss` 遗漏的文件头。
+
+## 2026-10-26 前端技术栈钉版与 Angular 22 编码规范入册
+
+- 决策：前端技术栈钉版——Angular 22、包管理器 pnpm、样式表 SCSS（工程位于 `frontend/` 目录）。
+- 改动：`doc/ui_design.md` 技术选型一条补钉版本信息；新增「Angular 编码规范（v22）」章节——TypeScript strict
+  （禁 `any`）、standalone 与 OnPush 走默认不显式声明、signals 状态（禁 `mutate`）、函数式输入输出（`input()` /
+  `output()` / `model()`）、Signal Forms 优先、原生控制流与 `class` / `style` 绑定（禁结构性指令旧语法与
+  `ngClass` / `ngStyle`、不导入 `CommonModule`）、host 对象、`inject()` 注入、`NgOptimizedImage`、WCAG AA
+  无障碍（AXE 全过）。
+
 ## 2026-10-26 AI 记忆工具定位为记忆模块内置插件
 
 Python 骨架落地阶段的首个补充决策（骨架本身为代码改动，不入本记录）。
