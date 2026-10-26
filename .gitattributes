@@ -1,0 +1,2 @@
+# 全仓库统一 LF 行尾（入库与检出均 LF）；二进制文件由 text=auto 自动识别并跳过
+* text=auto eol=lf
