@@ -1,0 +1,49 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-m 'not embedding and not live_api'"
+markers = [
+  "embedding: 真 fastembed + 真 sqlite-vec 表，离线确定性",
+  "live_api: 真调 DeepSeek 的契约钉子，本地手动运行",
+]
+
+# 依赖方向契约，机械执行 doc/ARCHITECTURE.md 的约束。
+[tool.importlinter]
+root_packages = ["companion"]
+
+[[tool.importlinter.contracts]]
+name = "LLM 与插件互不感知"
+type = "independence"
+modules = ["companion.llm", "companion.plugins"]
+
+[[tool.importlinter.contracts]]
+name = "提示词模块不依赖 LLM 模块"
+type = "forbidden"
+source_modules = ["companion.prompt"]
+forbidden_modules = ["companion.llm"]
+
+# 记忆模块只被提示词组装（读）、调度层后台任务（写）、引擎（分发 AI 记忆工具）访问。
+[[tool.importlinter.contracts]]
+name = "记忆模块仅被引擎、提示词、调度层访问"
+type = "forbidden"
+source_modules = [
+  "companion.api",
+  "companion.llm",
+  "companion.plugins",
+  "companion.storage",
+]
+forbidden_modules = ["companion.memory"]
+
+[[tool.importlinter.contracts]]
+name = "存储层不依赖上层模块"
+type = "forbidden"
+source_modules = ["companion.storage"]
+forbidden_modules = [
+  "companion.api",
+  "companion.engine",
+  "companion.llm",
+  "companion.memory",
+  "companion.plugins",
+  "companion.prompt",
+  "companion.scheduler",
+]
